@@ -20,3 +20,4 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
 end
 gem "pg", "~> 1.5"
+gem "sidekiq", "~> 8.0"

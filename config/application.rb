@@ -28,5 +28,14 @@ module RubyDevTest1
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+
+    Sidekiq.configure_server do |config|
+      config.redis = { url: ENV.fetch('REDIS_URL') }
+    end
+
+    Sidekiq.configure_client do |config|
+      config.redis = { url: ENV.fetch('REDIS_URL') }
+    end
+
   end
 end

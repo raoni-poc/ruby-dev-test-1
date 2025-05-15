@@ -11,6 +11,12 @@ services:
     volumes:
       - ruby_dev_test_db_volume_raoni:/var/lib/postgresql/data
 
+  redis:
+    image: redis:7.0-alpine
+    container_name: ruby-dev-test-redis-raoni
+    ports:
+      - "6377:6379"
+
   web:
     build:
       context: .
@@ -26,10 +32,31 @@ services:
       DATABASE_PORT: 5432
       DATABASE_USERNAME: postgres
       DATABASE_PASSWORD: 12345678
+      REDIS_URL: redis://redis:6379/0
     volumes:
       - .:/app
     working_dir: /app
     command: bash -c "bundle install && bin/rails server -b 0.0.0.0 -p 3000"
+
+  sidekiq:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ruby-dev-test-sidekiq-raoni
+    depends_on:
+      - db
+      - redis
+    environment:
+      RAILS_ENV: development
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: 12345678
+      REDIS_URL: redis://redis:6379/0
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: bundle exec sidekiq
 
 volumes:
   ruby_dev_test_db_volume_raoni:
