@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:17.4
+    container_name: ruby-dev-test-db-raoni
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345678
+      POSTGRES_DB: postgres
+    ports:
+      - "5437:5432" #Essa é sua porta local 5437, troque-a se necessário
+    volumes:
+      - ruby_dev_test_db_volume_raoni:/var/lib/postgresql/data
+
+volumes:
+  ruby_dev_test_db_volume_raoni:
