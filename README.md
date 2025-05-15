@@ -7,3 +7,10 @@ A soluçãos deverá ser escrita majoritariamente em Ruby com framework Ruby on 
 Realizar um fork deste repositório e abrir o PR ao finalizar.
 
 ------------
+
+Execute os comandos rails dentro do container web. Ex.:
+
+```bash
+docker compose exec web bundle exec rails db:create
+docker compose exec web bundle exec rails db:migrate
+```
