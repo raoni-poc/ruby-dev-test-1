@@ -11,5 +11,26 @@ services:
     volumes:
       - ruby_dev_test_db_volume_raoni:/var/lib/postgresql/data
 
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ruby-dev-test-web-raoni
+    depends_on:
+      - db
+    ports:
+      - "3007:3000"
+    environment:
+      RAILS_ENV: development
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: 12345678
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: bash -c "bundle install && bin/rails server -b 0.0.0.0 -p 3000"
+
 volumes:
   ruby_dev_test_db_volume_raoni:
+
