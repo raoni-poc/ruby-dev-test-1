@@ -14,3 +14,10 @@ Execute os comandos rails dentro do container web. Ex.:
 docker compose exec web bundle exec rails db:create
 docker compose exec web bundle exec rails db:migrate
 ```
+
+Considere criar um aliases temporario
+
+```bash
+alias rails='docker compose exec web bundle exec rails'
+alias bundle='docker compose exec web bundle'
+```

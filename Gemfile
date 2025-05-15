@@ -21,3 +21,5 @@ group :development, :test do
 end
 gem "pg", "~> 1.5"
 gem "sidekiq", "~> 8.0"
+gem "devise", "~> 4.9"
+gem "devise-jwt", "~> 0.12.1"

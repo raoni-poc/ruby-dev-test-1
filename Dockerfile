@@ -33,8 +33,17 @@ RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential git libyaml-dev pkg-config && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
+# Update bundle
+RUN gem install bundler
+
 # Install application gems
 COPY Gemfile Gemfile.lock ./
+
+# Update bundle on Gemfile.lock
+RUN bundle config set --local frozen false
+RUN bundle update --bundler
+
+# Install application gems
 RUN bundle install && \
     rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
     bundle exec bootsnap precompile --gemfile
@@ -44,9 +53,6 @@ COPY . .
 
 # Precompile bootsnap code for faster boot times
 RUN bundle exec bootsnap precompile app/ lib/
-
-
-
 
 # Final stage for app image
 FROM base
