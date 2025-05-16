@@ -14,6 +14,7 @@ gem "thruster", require: false # Add HTTP asset caching/compression and X-Sendfi
 # gem "image_processing", "~> 1.2" # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "rack-cors" # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
 group :development, :test do
+  gem "faker", "~> 3.5"
   gem "dotenv-rails"
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude" # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "brakeman", require: false # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
