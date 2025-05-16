@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_16_110922) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_16_171742) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -42,17 +42,26 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_16_110922) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
-  create_table "files", force: :cascade do |t|
+  create_table "file_records", force: :cascade do |t|
     t.string "original_name", null: false
     t.string "original_mime_type"
     t.bigint "size"
-    t.bigint "folder_id"
     t.text "description"
     t.string "visibility", default: "private"
+    t.string "sha256"
+    t.bigint "owner_id", null: false
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["folder_id"], name: "index_files_on_folder_id"
+    t.index ["owner_id"], name: "index_file_records_on_owner_id"
+    t.index ["sha256"], name: "index_file_records_on_sha256", unique: true
+  end
+
+  create_table "file_records_folders", id: false, force: :cascade do |t|
+    t.bigint "file_record_id", null: false
+    t.bigint "folder_id", null: false
+    t.index ["file_record_id"], name: "index_file_records_folders_on_file_record_id"
+    t.index ["folder_id"], name: "index_file_records_folders_on_folder_id"
   end
 
   create_table "folders", force: :cascade do |t|
@@ -64,6 +73,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_16_110922) do
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["owner_id", "parent_id", "name"], name: "index_folders_on_owner_parent_name", unique: true
     t.index ["owner_id"], name: "index_folders_on_owner_id"
     t.index ["parent_id"], name: "index_folders_on_parent_id"
   end
@@ -82,7 +92,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_16_110922) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "files", "folders"
+  add_foreign_key "file_records", "users", column: "owner_id"
   add_foreign_key "folders", "folders", column: "parent_id"
   add_foreign_key "folders", "users", column: "owner_id"
 end

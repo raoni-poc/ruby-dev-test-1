@@ -10,22 +10,82 @@
 
 require 'faker'
 require 'devise'
+require "tempfile"
+require "zip"
 
-puts "Gerando 1000 usuários fictícios..."
+User.create!(
+  email: "admin@test.com",
+  password: "12345678"
+)
 
-1000.times do |i|
+puts "Gerando 10 usuários fictícios..."
+
+10.times do |i|
   email = Faker::Internet.unique.email
   password = Faker::Internet.password(min_length: 16, mix_case: true, special_characters: true)
-  encrypted_password = Devise::Encryptor.digest(User, password)
 
   User.create!(
     email: email,
-    encrypted_password: encrypted_password,
-    created_at: Faker::Time.backward(days: 365, period: :evening),
-    updated_at: Faker::Time.backward(days: 30, period: :morning)
+    password: password,
   )
 
   puts "Usuário #{i + 1} criado" if (i + 1) % 100 == 0
 end
 
-puts "1000 usuários criados com sucesso!"
+puts "10 usuários criados com sucesso!"
+
+#################################################
+
+puts "Gerando 100 pastas fictícias..."
+
+created_folder_ids = []
+
+100.times do |i|
+  parent_id = created_folder_ids.empty? ? nil : created_folder_ids.sample
+
+  folder = Folder.create!(
+    name: Faker::File.unique.dir,
+    owner: User.first,
+    parent_id: parent_id,
+    description: Faker::Lorem.sentence,
+  )
+
+  created_folder_ids << folder.id
+
+  puts "Pasta #{i + 1} criada" if (i + 1) % 10 == 0
+end
+
+puts "100 pastas criadas com sucesso!"
+
+#################################################
+
+puts "Gerando 1000 arquivos ZIP fictícios..."
+
+1000.times do |i|
+  # Pega uma pasta aleatória para relacionar
+  folder_id = created_folder_ids.sample
+  folder = Folder.find(folder_id)
+
+  # Criar arquivo ZIP fictício
+  temp_zip = Tempfile.new(["file_#{1+i}", ".zip"])
+  Zip::OutputStream.open(temp_zip) do |zos|
+    zos.put_next_entry("readme.txt")
+    zos.write(Faker::Lorem.sentence)
+  end
+
+  params = {
+    owner: User.first,
+    original_name: "file_#{1+i}.zip",
+    original_mime_type: "application/text",
+    size: temp_zip.size, # tamanho em bytes
+    description: Faker::Lorem.sentence,
+  }
+  file = FileRecords::CreateService.new(params, temp_zip, folder).call
+
+  # Associa o arquivo à pasta (has_and_belongs_to_many)
+  file.folders << folder
+
+  puts "Arquivo ZIP #{i + 1} criado e associado à pasta #{folder.name}" if (i + 1) % 50 == 0
+end
+
+puts "1000 arquivos ZIP criados com sucesso!"
