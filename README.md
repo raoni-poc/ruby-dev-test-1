@@ -8,6 +8,12 @@ Realizar um fork deste repositório e abrir o PR ao finalizar.
 
 ------------
 
+Levantando containers
+```bash
+docker compose up --build
+```
+
+
 Execute os comandos rails dentro do container web. Ex.:
 
 ```bash
