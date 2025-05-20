@@ -14,8 +14,6 @@ module FileRecords
 
       existing = FileRecord.find_by(sha256: sha256)
 
-      puts "existing: #{existing.inspect}"
-
       # folder = Folder.first
       #
       # if existing.present?
@@ -28,14 +26,8 @@ module FileRecords
         sha256: sha256
       )
 
-      puts "file_record: #{file_record.inspect}"
-      puts "errors: #{file_record.errors.full_messages}"
-
       file_record.uploaded_file.attach(uploaded_file)
-      result = file_record.save
-
-      puts "errors: #{file_record.errors.full_messages}"
-
+      file_record.save
       file_record
     end
   end

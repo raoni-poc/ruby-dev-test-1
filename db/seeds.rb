@@ -8,8 +8,8 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
-require 'faker'
-require 'devise'
+require "faker"
+require "devise"
 require "tempfile"
 require "zip"
 
@@ -44,7 +44,7 @@ created_folder_ids = []
   parent_id = created_folder_ids.empty? ? nil : created_folder_ids.sample
 
   folder = Folder.create!(
-    name: Faker::File.unique.dir,
+    name: Faker::File.unique.dir(segment_count: 1),
     owner: User.first,
     parent_id: parent_id,
     description: Faker::Lorem.sentence,
@@ -67,7 +67,7 @@ puts "Gerando 1000 arquivos ZIP fictícios..."
   folder = Folder.find(folder_id)
 
   # Criar arquivo ZIP fictício
-  temp_zip = Tempfile.new(["file_#{1+i}", ".zip"])
+  temp_zip = Tempfile.new(["file_#{1 + i}", ".zip"])
   Zip::OutputStream.open(temp_zip) do |zos|
     zos.put_next_entry("readme.txt")
     zos.write(Faker::Lorem.sentence)
