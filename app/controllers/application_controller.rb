@@ -1,19 +1,24 @@
 # frozen_string_literal: true
 class ApplicationController < ActionController::API
+  include DeviseTokenAuth::Concerns::SetUserByToken
 
   private
 
+  def paginate(file_records)
+    # Pagy::DEFAULT[:limit] = 3
+    @pagy, paginated = pagy(file_records)
+    paginated
+  end
+
   def pagination_meta(pagy)
-    {
+    return {
       current_page: pagy.page,
       total_pages: pagy.pages,
-      total_count: pagy.count,
-      items: pagy.items
+      total_count: pagy.count
     }
   end
 
   def pagination_links(pagy)
-    helpers = Rails.application.routes.url_helpers
     base_url = request.base_url + request.path
 
     links = {
