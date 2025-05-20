@@ -1,12 +1,19 @@
 # frozen_string_literal: true
 
-class FilesRecordsController < ApplicationController
+class FileRecordsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_file_record, only: [:show, :destroy]
+
+  include Pagy::Backend
   def index
     current_user = User.first
-    @file_records = current_user.file_records.includes(:folders)
-    render json: @file_records
+    file_records = current_user.file_records.includes(:folders)
+    @pagy, paginated = pagy(file_records)
+    render json: FileRecordSerializer.new(
+      paginated,
+      meta: pagination_meta(@pagy),
+      links: pagination_links(@pagy)
+    ).serializable_hash
   end
 
   def create

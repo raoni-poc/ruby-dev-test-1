@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class FileRecord < ApplicationRecord
   belongs_to :owner, class_name: "User"
   has_and_belongs_to_many :folders
@@ -17,6 +18,7 @@ class FileRecord < ApplicationRecord
       errors.add(:zip, "deve ser um arquivo ZIP")
     end
   end
+
   def must_be_unique_by_hash
     return unless sha256.present?
 

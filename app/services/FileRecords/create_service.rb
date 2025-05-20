@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 module FileRecords
-  class CreateService
+  class CreateService < ApplicationService
     attr_reader :params, :zip_file, :file_record
 
     def initialize(params, zip_file, folder)
@@ -18,10 +20,10 @@ module FileRecords
 
       existing = FileRecord.find_by(sha256: sha256)
 
-     if existing.present?
-       folder << existing
-       return
-     end
+      if existing.present?
+        folder << existing
+        return
+      end
 
       file_record = FileRecord.new(params)
       file_record.zip.attach(

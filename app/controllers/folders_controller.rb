@@ -3,7 +3,7 @@
 class FoldersController < ApplicationController
   def index
     current_user = User.first
-    return Folder.where(owner: current_user).all.to_json
+    render json: Folder.where(owner: current_user)
   end
 
   def create
@@ -13,7 +13,7 @@ class FoldersController < ApplicationController
 
   def show
     current_user = User.first
-   Folder.find_by(id: params[:id], owner: current_user).first
+    Folder.find_by(id: params[:id], owner: current_user).first
   end
 
   def update

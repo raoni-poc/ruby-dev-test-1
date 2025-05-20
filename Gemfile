@@ -24,5 +24,7 @@ gem "pg", "~> 1.5"
 gem "sidekiq", "~> 8.0"
 gem "devise", "~> 4.9"
 gem "devise-jwt", "~> 0.12.1"
-
 gem "rubyzip", "~> 2.4"
+gem "pagy", "~> 9.3"
+gem "jsonapi-serializer", "~> 2.2"
+gem "devise_token_auth", "~> 1.2"

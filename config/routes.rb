@@ -2,5 +2,5 @@ Rails.application.routes.draw do
   devise_for :users
 
   resources :folders
-  resources :files
+  resources :file_records
 end

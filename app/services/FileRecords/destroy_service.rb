@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 module FileRecords
-  class DestroyService
+  class DestroyService < ApplicationService
     attr_reader :file_record, :folder, :hard_delete
 
     def initialize(file_record, folder)

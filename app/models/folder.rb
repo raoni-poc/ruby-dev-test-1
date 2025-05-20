@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class Folder < ApplicationRecord
   belongs_to :owner, class_name: "User"
   belongs_to :parent, class_name: "Folder", optional: true
