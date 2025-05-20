@@ -13,7 +13,7 @@ require 'devise'
 require "tempfile"
 require "zip"
 
-User.create!(
+User.first_or_create(
   email: "admin@test.com",
   password: "12345678"
 )
@@ -73,19 +73,23 @@ puts "Gerando 1000 arquivos ZIP fictícios..."
     zos.write(Faker::Lorem.sentence)
   end
 
+  uploaded_file = ActionDispatch::Http::UploadedFile.new(
+    tempfile: temp_zip,
+    filename: "file_#{i + 1}.zip",
+    type: 'application/zip'
+  )
+
   params = {
-    owner: User.first,
-    original_name: "file_#{1+i}.zip",
-    original_mime_type: "application/text",
-    size: temp_zip.size, # tamanho em bytes
+    file: uploaded_file,
     description: Faker::Lorem.sentence,
   }
-  file = FileRecords::CreateService.new(params, temp_zip, folder).call
+
+  file = FileRecords::CreateService.call(params)
 
   # Associa o arquivo à pasta (has_and_belongs_to_many)
   file.folders << folder
 
-  puts "Arquivo ZIP #{i + 1} criado e associado à pasta #{folder.name}" if (i + 1) % 50 == 0
+  puts "Arquivo #{i + 1} criado e associado à pasta #{folder.name}" if (i + 1) % 50 == 0
 end
 
-puts "1000 arquivos ZIP criados com sucesso!"
+puts "1000 arquivos criados com sucesso!"

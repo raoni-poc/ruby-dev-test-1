@@ -7,8 +7,7 @@ class FileRecordsController < ApplicationController
   include Pagy::Backend
 
   def index
-    current_user = User.first
-    file_records = FileRecord.where(owner: current_user).all
+    file_records = FileRecord.all
     paginated = paginate(file_records, params)
     render json: FileRecordSerializer.new(
       paginated,
@@ -18,14 +17,14 @@ class FileRecordsController < ApplicationController
   end
 
   def create
-    current_user = User.first
-    service = FileRecords::CreateService.new(file_record_params, zip_file, folder)
-    @file_record = service.call
+    file_record = FileRecords::CreateService.call(params)
 
-    if @file_record
-      render json: @file_record, status: :created
+    if file_record.persisted?
+      render json: FileRecordSerializer.new(
+        file_record,
+      ).serializable_hash, status: :created
     else
-      render json: { error: "Erro ao criar arquivo" }, status: :unprocessable_entity
+      render json: {'erros': file_record.errors}, status: :unprocessable_entity
     end
   end
 

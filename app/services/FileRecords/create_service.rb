@@ -2,36 +2,41 @@
 
 module FileRecords
   class CreateService < ApplicationService
-    attr_reader :params, :zip_file, :file_record
-
-    def initialize(params, zip_file, folder)
-      @folder = folder
-      @params = params
-      @zip_file = zip_file
-    end
-
     def call
-      return unless zip_file.respond_to?(:read)
+      uploaded_file = @params[:file]
+      return unless uploaded_file.respond_to?(:read)
 
-      sha256 = Digest::SHA256.hexdigest(zip_file.read)
-      zip_file.rewind
+      file_data = uploaded_file.read
+      uploaded_file.rewind
 
-      params[:sha256] = sha256
+      sha256 = Digest::SHA256.hexdigest(file_data)
+      uploaded_file.rewind
 
       existing = FileRecord.find_by(sha256: sha256)
 
-      if existing.present?
-        folder << existing
-        return
-      end
+      puts "existing: #{existing.inspect}"
 
-      file_record = FileRecord.new(params)
-      file_record.zip.attach(
-        io: zip_file,
-        filename: "file.zip",
-        content_type: "application/zip"
+      # folder = Folder.first
+      #
+      # if existing.present?
+      #   folder << existing
+      #   return existing
+      # end
+
+      file_record = FileRecord.new(
+        description: @params[:description],
+        sha256: sha256
       )
-      file_record.save ? file_record : nil
+
+      puts "file_record: #{file_record.inspect}"
+      puts "errors: #{file_record.errors.full_messages}"
+
+      file_record.uploaded_file.attach(uploaded_file)
+      result = file_record.save
+
+      puts "errors: #{file_record.errors.full_messages}"
+
+      file_record
     end
   end
 end

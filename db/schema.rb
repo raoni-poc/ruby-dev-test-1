@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_20_142640) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_20_203143) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -43,17 +43,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_20_142640) do
   end
 
   create_table "file_records", force: :cascade do |t|
-    t.string "original_name", null: false
-    t.string "original_mime_type"
-    t.bigint "size"
     t.text "description"
-    t.string "visibility", default: "private"
     t.string "sha256"
-    t.bigint "owner_id", null: false
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["owner_id"], name: "index_file_records_on_owner_id"
     t.index ["sha256"], name: "index_file_records_on_sha256", unique: true
   end
 
@@ -99,7 +93,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_20_142640) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "file_records", "users", column: "owner_id"
   add_foreign_key "folders", "folders", column: "parent_id"
   add_foreign_key "folders", "users", column: "owner_id"
 end
