@@ -4,9 +4,8 @@ class ApplicationController < ActionController::API
 
   private
 
-  def paginate(file_records)
-    # Pagy::DEFAULT[:limit] = 3
-    @pagy, paginated = pagy(file_records)
+  def paginate(file_records, params)
+    @pagy, paginated = pagy(file_records, limit: params[:limit])
     paginated
   end
 

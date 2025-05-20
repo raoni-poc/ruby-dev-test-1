@@ -9,7 +9,7 @@ class FileRecordsController < ApplicationController
   def index
     current_user = User.first
     file_records = FileRecord.where(owner: current_user).all
-    paginated = paginate(file_records)
+    paginated = paginate(file_records, params)
     render json: FileRecordSerializer.new(
       paginated,
       meta: pagination_meta(@pagy),
